@@ -29,6 +29,7 @@ def retry(max_retries, delay=1):
 
 @retry(max_retries=3)
 def scrape_data():
+    global last_visited_url
     driver = webdriver.Safari()
     driver.set_window_size(1200, 600)
     try:
