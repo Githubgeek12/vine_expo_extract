@@ -5,9 +5,18 @@ from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.chrome.options import Options
+
+options = Options()
+options.add_argument('--headless')
+options.add_argument('--disable-gpu')
+options.add_argument("--user-agent= Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36")
+
+
 n = 1
 visited_urls = set()
 last_visited_url = 0
+
 
 def retry(max_retries, delay=1):
     def decorator(func):
@@ -30,7 +39,7 @@ def retry(max_retries, delay=1):
 @retry(max_retries=3)
 def scrape_data():
     global last_visited_url
-    driver = webdriver.Safari()
+    driver = webdriver.Chrome(options=options)
     driver.set_window_size(1200, 600)
     try:
         driver.get("https://wineparis-vinexpo.com/newfront/marketplace/exhibitors?pageNumber=1&limit=60")
@@ -73,10 +82,12 @@ def scrape_pg(driver):
 
             ele1 = driver.find_elements(By.CSS_SELECTOR, '#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div')
             print(f'{len(ele1)}page start')
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child(1) > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child("+str(len(ele1))+") > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
-            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiBox-root.css-1ek3hjv > nav > ul > li:nth-child(9) > button ')))
-            button = driver.find_element(By.CSS_SELECTOR, '#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiBox-root.css-1ek3hjv > nav > ul > li:nth-child(9) > button ')
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child(1) > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child("+str(len(ele1))+") > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
+            btn = '#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiBox-root.css-1ek3hjv > nav > ul > li:nth-child(9) > button '
+            WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, btn)))
+            print('p1')
+            button = driver.find_element(By.CSS_SELECTOR, btn)
             if driver.current_url in visited_urls:
                 while driver.current_url in visited_urls:
                     print(f'page {driver.current_url} is already visited')
@@ -101,7 +112,7 @@ def scrape_pg(driver):
             for indx, title in enumerate(titles):
                 sele = 'div:nth-child(' + str(indx + 1) + ') > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div'
                 name = title.select_one(sele).get_text()
-                link = title.select_one('div:nth-child(' + str(indx + 1) + ') > div > div.MuiBox-root.css-79elbk > a')
+                link = title.select_one('div:nth-child(' + str(indx + 1) + ') > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a')
                 print(f"{n}){name}--------{link['href']}")
                 n += 1
         except Exception as e:
