@@ -1,20 +1,29 @@
 import functools
 import time
+
+import openpyxl
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+from openpyxl import Workbook
+
+f_path = '/Users/trishika/PycharmProjects/pythonProject/data/vine/wine.xlsx'
+workbook = openpyxl.load_workbook(f_path)
+sheet = workbook['data']
+sheet1 = workbook['page']
 
 options = Options()
 options.add_argument('--headless')
 options.add_argument('--disable-gpu')
 options.add_argument("--user-agent= Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36")
 
-
-n = 1
 visited_urls = set()
+for row in sheet1.iter_rows(min_row=1, max_col=1, max_row=sheet1.max_row, values_only=True):
+    visited_urls.add(row[0])
+
 last_visited_url = 0
 
 
@@ -108,19 +117,26 @@ def scrape_pg(driver):
         titles = soup.find_all('div', class_='MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-md-4 MuiGrid-grid-lg-3 css-1m6ye84')
         print('page content loaded')
         print(len(titles))
+        next_row = sheet.max_row + 1
         try:
             for indx, title in enumerate(titles):
                 sele = 'div:nth-child(' + str(indx + 1) + ') > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div'
                 name = title.select_one(sele).get_text()
                 link = title.select_one('div:nth-child(' + str(indx + 1) + ') > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a')
-                print(f"{n}){name}--------{link['href']}")
-                n += 1
+                sheet.cell(row=next_row, column=1, value=name)
+                sheet.cell(row=next_row, column=2, value='https://wineparis-vinexpo.com'+link['href'])
+                print(f"{next_row}){name}--------{link['href']}")
+                next_row += 1
+
         except Exception as e:
             print(e)
             driver.refresh()
             raise Exception("error scraping page content")
         visited_urls.add(driver.current_url)
+        next_row1 = sheet1.max_row + 1
+        sheet1.cell(row=next_row1, column=1, value=driver.current_url)
         print('Url added successfully')
+        workbook.save(f_path)
         last_visited_url = driver.current_url
         if button.is_enabled():
             driver.execute_script("arguments[0].click();", button)
