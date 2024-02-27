@@ -1,6 +1,5 @@
 import functools
 import time
-
 import openpyxl
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup as bs
@@ -60,7 +59,7 @@ def scrape_data():
 
 @retry(max_retries=3)
 def scrape_pg(driver):
-    global n, last_visited_url
+    global last_visited_url
     while True:
 
         try:
