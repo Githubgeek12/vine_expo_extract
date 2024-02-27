@@ -93,12 +93,13 @@ def scrape_pg(driver):
             WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child(1) > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
             WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-2.css-1fxdrvb > div:nth-child("+str(len(ele1))+") > div > div.MuiBox-root.css-cduqi1 > div.MuiBox-root.css-ob69bz > a > div > div")))
             btn = '#__next > div.MuiBox-root.css-g9qx4c > div.MuiBox-root.css-1roqr68 > main > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.MuiGrid-grid-md-8.MuiGrid-grid-lg-9.css-vhv0fi > div > div.MuiBox-root.css-0 > div.MuiBox-root.css-1ek3hjv > nav > ul > li:nth-child(9) > button '
-            WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, btn)))
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, btn)))
             print('p1')
             button = driver.find_element(By.CSS_SELECTOR, btn)
             if driver.current_url in visited_urls:
                 while driver.current_url in visited_urls:
                     print(f'page {driver.current_url} is already visited')
+                    WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, btn)))
                     driver.execute_script("arguments[0].click();", button)
                     WebDriverWait(driver, 10).until(EC.url_changes(driver.current_url))
 
@@ -138,9 +139,11 @@ def scrape_pg(driver):
         workbook.save(f_path)
         last_visited_url = driver.current_url
         if button.is_enabled():
+            WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.CSS_SELECTOR, btn)))
             driver.execute_script("arguments[0].click();", button)
             WebDriverWait(driver, 10).until(EC.url_changes(driver.current_url))
         else:
+            print("All data scraped")
             break
 
     # Close the Browser
